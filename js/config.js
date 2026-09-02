@@ -116,6 +116,10 @@ const birthdayConfig = {
     "[Sign it however feels like you.]"
   ],
 
+  // PAGE 9 — wish form submission endpoint
+  // Sends the answer to the MockAPI endpoint when the user clicks Send.
+  wishApiUrl: "https://6a9821f67160beda2292b03f.mockapi.io/wish",
+
   // Background music. See README for how to add your own file.
   music: "assets/music/birthday.mp3"
 };
