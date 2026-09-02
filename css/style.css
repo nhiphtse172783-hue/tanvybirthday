@@ -1,0 +1,226 @@
+/* ==========================================================================
+   BIRTHDAY — SHARED DESIGN SYSTEM
+   A small interactive universe, told across eleven pages. This sheet holds
+   the visual DNA every page shares: type, motion, cursor, the transition
+   veil, and one recurring symbol — a small point of light.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500;600&family=Caveat:wght@500;600&display=swap');
+
+:root{
+  /* ---- type ---- */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-hand: 'Caveat', cursive;
+
+  /* ---- motion ---- */
+  --ease-soft: cubic-bezier(.22,.61,.36,1);
+  --ease-slow: cubic-bezier(.16,.84,.44,1);
+  --t-page: 800ms;
+
+  /* ---- default (pink, warm, soft) ---- */
+  --bg: #e2bccb;
+  --bg-2: #f5dfe8;
+  --ink: #3a232b;
+  --ink-soft: rgba(58,35,43,.72);
+  --accent: #b76d7e;
+  --accent-2: #8ca48d;
+  --grain-opacity: .03;
+}
+
+/* ---- page palettes ------------------------------------------------- */
+body.tone-night{
+  --bg:#f4dfe6; --bg-2:#e9c7d4; --ink:#341f28; --ink-soft:rgba(52,31,40,.72);
+  --accent:#b86179; --accent-2:#7b8d77;
+}
+body.tone-dusk{
+  --bg:#f2dce3; --bg-2:#e7c1cf; --ink:#39272d; --ink-soft:rgba(57,39,45,.72);
+  --accent:#bb6d7f; --accent-2:#8d7d8f;
+}
+body.tone-paper{
+  --bg:#f7e7ee; --bg-2:#f1d9e5; --ink:#36242b; --ink-soft:rgba(54,36,43,.72);
+  --accent:#b96d80; --accent-2:#7d9480;
+}
+body.tone-dark{
+  --bg:#26191d; --bg-2:#3b272f; --ink:#f8e7ed; --ink-soft:rgba(248,231,237,.72);
+  --accent:#e9adc0; --accent-2:#d4b7c4;
+}
+body.tone-celebrate{
+  --bg:#e2bccb; --bg-2:#f4dfe7; --ink:#3f2730; --ink-soft:rgba(63,39,48,.76);
+  --accent:#bf677d; --accent-2:#8ea989;
+}
+body.tone-dawn{
+  --bg:#f4dfe5; --bg-2:#f1ccd9; --ink:#3a2530; --ink-soft:rgba(58,37,48,.72);
+  --accent:#c97590; --accent-2:#8ca08f;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ color-scheme: dark; }
+body.tone-paper, body.tone-dawn{ color-scheme: light; }
+
+html,body{ height:100%; }
+
+body{
+  background: linear-gradient(180deg, var(--bg-2), var(--bg));
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  text-transform: lowercase;
+  transition: background 500ms var(--ease-soft), color 500ms var(--ease-soft);
+  cursor: none;
+}
+
+@media (max-width: 720px), (hover:none){
+  body{ cursor: auto; }
+}
+
+::selection{ background: var(--accent); color: var(--bg); }
+
+a{ color: inherit; text-decoration: none; }
+
+.visually-hidden{
+  position:absolute; width:1px; height:1px; overflow:hidden;
+  clip:rect(0 0 0 0); white-space:nowrap;
+}
+
+/* ---- grain (very subtle, adds "handmade" texture) ------------------- */
+.grain{
+  position:fixed; inset:0; pointer-events:none; z-index:5; mix-blend-mode:overlay;
+  opacity: var(--grain-opacity);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- custom cursor: a small light, and its slower halo -------------- */
+.cursor-dot, .cursor-glow{
+  position:fixed; top:0; left:0; border-radius:50%; pointer-events:none;
+  z-index: 9999; transform: translate(-50%,-50%);
+}
+.cursor-dot{
+  width:6px; height:6px; background: var(--accent);
+  box-shadow: 0 0 10px 2px var(--accent);
+}
+.cursor-glow{
+  width:34px; height:34px; border:1px solid var(--accent);
+  opacity:.35;
+}
+@media (max-width:720px), (hover:none){
+  .cursor-dot, .cursor-glow{ display:none; }
+}
+
+/* ---- magnetic / soft buttons ----------------------------------------- */
+.btn{
+  display:inline-flex; align-items:center; gap:.6em;
+  font-family: var(--font-body); font-size: .95rem; letter-spacing:.02em;
+  color: var(--ink); background: rgba(255,255,255,.18);
+  border: 1px solid rgba(34,27,26,.18);
+  padding: .85em 1.5em; border-radius: 999px;
+  cursor: none; position:relative; isolation:isolate;
+  transition: transform 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+  box-shadow: 0 8px 18px rgba(38,30,28,.04);
+}
+@media (max-width:720px), (hover:none){ .btn{ cursor:pointer; } }
+.btn:hover, .btn:focus-visible{ transform: translateY(-1px); border-color: rgba(34,27,26,.28); box-shadow: 0 12px 24px rgba(38,30,28,.08); }
+.btn:focus-visible{ outline: 2px solid var(--accent); outline-offset: 4px; }
+
+.btn-ghost{
+  border-color: transparent; padding: .5em .2em;
+  color: var(--ink-soft);
+}
+.btn-ghost::before{ display:none; }
+.btn-ghost:hover, .btn-ghost:focus-visible{ color: var(--ink); }
+
+/* ---- layout shells ----------------------------------------------------*/
+.scene{
+  height: 100vh; height: 100dvh;
+  min-height: 100vh; min-height: 100dvh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  position:relative; padding: 8vh 6vw; text-align:center;
+  overflow: hidden;
+}
+
+.eyebrow{
+  font-size:.8rem; letter-spacing:.14em; color: var(--ink-soft);
+  font-weight:400; margin-bottom: 1.4em;
+}
+
+.headline{
+  font-family: var(--font-display); font-weight: 400; line-height:1.05;
+  font-size: clamp(2.1rem, 6vw, 4.4rem);
+  max-width: 16ch;
+}
+
+.lede{
+  font-family: var(--font-body); font-weight: 300;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  color: var(--ink-soft); max-width: 42ch; margin-top: 1.3em; line-height:1.6;
+}
+
+.next-hint{
+  position:absolute; bottom: 6vh; left:50%; transform:translateX(-50%);
+  font-size:.85rem; color: var(--ink-soft); display:flex; flex-direction:column;
+  align-items:center; gap:.6em; opacity:0; animation: hint-in 900ms var(--ease-soft) 2.4s forwards;
+}
+.next-hint .line{ width:1px; height:26px; background: var(--ink-soft); animation: line-grow 1600ms var(--ease-soft) infinite; }
+@keyframes hint-in{ to{ opacity:.8; } }
+@keyframes line-grow{ 0%{ transform: scaleY(0); transform-origin:top; } 50%{ transform: scaleY(1); transform-origin:top; } 50.01%{ transform-origin:bottom; } 100%{ transform: scaleY(0); transform-origin:bottom; } }
+
+/* ---- transition veil: the recurring light travelling between pages -- */
+.veil{
+  position: fixed; inset:0; z-index: 10000; background: var(--bg);
+  clip-path: circle(150% at 50% 50%);
+  pointer-events:none;
+}
+.veil.veil-cover{
+  animation: veil-cover var(--t-page) var(--ease-slow) forwards;
+}
+.veil.veil-reveal{
+  clip-path: circle(150% at 50% 50%);
+  animation: veil-reveal var(--t-page) var(--ease-slow) forwards;
+}
+.veil .veil-spark{
+  position:absolute; top:50%; left:50%; width:10px; height:10px; border-radius:50%;
+  background: var(--accent); box-shadow: 0 0 24px 8px var(--accent);
+  transform: translate(-50%,-50%);
+}
+@keyframes veil-cover{ from{ clip-path: circle(0% at var(--vx,50%) var(--vy,50%)); } to{ clip-path: circle(150% at var(--vx,50%) var(--vy,50%)); } }
+@keyframes veil-reveal{ from{ clip-path: circle(150% at var(--vx,50%) var(--vy,50%)); } to{ clip-path: circle(0% at var(--vx,50%) var(--vy,50%)); } }
+
+/* ---- audio toggle ------------------------------------------------------*/
+.sound-toggle{
+  position: fixed; bottom: 5vh; right: 5vw; z-index: 500;
+  width:44px; height:44px; border-radius:50%;
+  border: 1px solid var(--ink-soft); background: transparent;
+  display:flex; align-items:center; justify-content:center;
+  cursor:none; color: var(--ink);
+}
+@media (max-width:720px), (hover:none){ .sound-toggle{ cursor:pointer; } }
+.sound-toggle svg{ width:16px; height:16px; }
+.sound-toggle[hidden]{ display:none; }
+
+/* ---- reduced motion ------------------------------------------------- */
+.reduced-motion *{
+  animation-duration: .001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .001ms !important;
+}
+
+/* ---- footer nav dot (page index, quiet) ------------------------------*/
+.progress{
+  position: fixed; top: 5vh; left: 50%; transform:translateX(-50%);
+  display:flex; gap:7px; z-index: 400;
+}
+.progress i{
+  width:5px; height:5px; border-radius:50%; background: var(--ink-soft); opacity:.5;
+  display:block;
+}
+.progress i.is-current{ background: var(--accent); opacity:1; box-shadow:0 0 8px 1px var(--accent); }
+
+/* ---- responsive base ---------------------------------------------------*/
+@media (max-width: 560px){
+  .scene{ padding: 7vh 7vw; }
+}

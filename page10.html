@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>happy birthday</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  canvas#fx{ position:fixed; inset:0; z-index:1; }
+  .rise{ opacity:0; transform: translateY(18px); }
+  .rise.is-visible{ animation: rise 1200ms var(--ease-slow) forwards; }
+  @keyframes rise{ to{ opacity:1; transform:none; } }
+
+  .today{ position:relative; z-index:3; font-family: var(--font-display); font-size: clamp(1.2rem,2.6vw,1.6rem); color: var(--ink-soft); text-transform: lowercase; letter-spacing: .08em; }
+
+  .big{
+    position:relative; z-index:3; font-family: var(--font-display); font-weight:400;
+    font-size: clamp(2.6rem, 9vw, 6.4rem); line-height:1; margin-top:.5em;
+    display:flex; flex-wrap:wrap; justify-content:center; gap: .04em .22em; text-transform: lowercase;
+  }
+  .big span{ display:inline-block; opacity:0; transform: translateY(26px); }
+  .big span.is-visible{ animation: letter-in 900ms var(--ease-slow) forwards; }
+  @keyframes letter-in{ to{ opacity:1; transform:none; } }
+
+  .who{ position:relative; z-index:3; margin-top: .7em; font-family: var(--font-display); font-style:italic; font-size: clamp(1.3rem,3vw,2rem); color: var(--accent); }
+  .meta{ position:relative; z-index:3; margin-top:.8em; color: var(--ink-soft); font-size:.9rem; letter-spacing:.04em; }
+  .invitation-wrap{
+    position:relative; z-index:3; width:min(100%, 430px); min-height: min(76vh, 700px);
+    padding: 1.25rem 1rem 1.5rem; border-radius: 30px; background: rgba(255,255,255,.18);
+    border: 1px solid rgba(72, 39, 50, .12); box-shadow: 0 16px 40px rgba(80, 45, 60, .09);
+    backdrop-filter: blur(2px); overflow:hidden;
+  }
+  .invitation-wrap::before,
+  .invitation-wrap::after{
+    content:""; position:absolute; border-radius:50%; border:1px solid rgba(72,39,50,.12); pointer-events:none;
+  }
+  .invitation-wrap::before{ width:200px; height:200px; right:-60px; top:-40px; }
+  .invitation-wrap::after{ width:170px; height:170px; left:-55px; bottom:-48px; }
+
+  .invitation-top{
+    display:flex; justify-content:space-between; align-items:center; gap: 1rem; margin-bottom: .75rem;
+  }
+  .badge{
+    display:inline-flex; align-items:center; justify-content:center; min-width: 96px; padding: .42rem .8rem;
+    border-radius: 999px; background: rgba(255,255,255,.38); border: 1px solid rgba(72,39,50,.15);
+    font-size: .6rem; letter-spacing: .18em; text-transform: lowercase; color: var(--ink-soft);
+  }
+  .mini-heart{ font-size: 1.3rem; color: var(--accent); filter: drop-shadow(0 6px 10px rgba(183,109,126,.25)); }
+
+  .invitation-card{
+    position:relative; margin-top: .4rem; padding: 1.2rem .8rem .9rem; border-radius: 26px;
+    background: linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.18));
+    border: 1px solid rgba(72,39,50,.12);
+  }
+
+  .big{
+    position:relative; z-index:3; font-family: var(--font-display); font-weight:400;
+    font-size: clamp(1.55rem, 6vw, 2.6rem); line-height: .95; margin-top:.25em;
+    display:flex; flex-wrap:wrap; justify-content:center; gap: .04em .08em; text-transform: lowercase;
+    white-space: nowrap;
+  }
+
+  .who{ position:relative; z-index:3; margin-top: .35em; font-family: var(--font-display); font-style:italic; font-size: clamp(1.1rem,3vw,1.6rem); color: var(--accent); }
+
+  .details-grid{
+    display:grid; grid-template-columns: 1fr; gap: .75rem; margin-top: 1.25rem;
+  }
+  .invite-item{
+    display:flex; align-items:center; justify-content:space-between; gap: .8rem; padding: .8rem .9rem; border-radius: 16px;
+    background: rgba(255,255,255,.24); border: 1px solid rgba(72,39,50,.10);
+  }
+  .invite-label{ font-size: .58rem; letter-spacing: .14em; text-transform: lowercase; color: var(--ink-soft); }
+  .invite-value{ flex:1; text-align:right; font-family: var(--font-display); font-size: .92rem; line-height:1.35; color: var(--ink); }
+
+  .footer-line{
+    margin-top: 1.1rem; padding-top: .9rem; border-top: 1px solid rgba(72,39,50,.12);
+    font-size: .78rem; letter-spacing: .12em; text-transform: lowercase; color: var(--ink-soft);
+  }
+
+  .cta{ position:relative; z-index:3; margin-top: 1.5em; }
+
+  @media (max-width: 390px){
+    .invitation-wrap{ padding: 1rem .8rem 1.3rem; }
+    .invite-item{ padding: .7rem .7rem; }
+    .invite-value{ font-size: .8rem; }
+  }
+</style>
+</head>
+<body class="tone-celebrate">
+  <div class="grain"></div>
+  <button class="sound-toggle" aria-label="Play music"></button>
+  <div class="progress" data-page="10"></div>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <main class="scene">
+    <div class="invitation-wrap rise" id="invite-wrap">
+
+      <div class="invitation-card">
+        <h1 class="big" id="big"></h1>
+        <p class="who" id="who"></p>
+
+        <div class="details-grid">
+          <div class="invite-item">
+            <span class="invite-label">date</span>
+            <span class="invite-value" id="event-date"></span>
+          </div>
+          <div class="invite-item">
+            <span class="invite-label">time</span>
+            <span class="invite-value" id="event-time"></span>
+          </div>
+          <div class="invite-item">
+            <span class="invite-label">place</span>
+            <span class="invite-value" id="event-location"></span>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="meta" id="meta"></p>
+      <div class="cta" id="cta"></div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // typography reveal
+    const bigEl = document.getElementById('big');
+    "anh xin phép được mời".split('').forEach((ch, i) => {
+      const s = document.createElement('span');
+      s.textContent = ch;
+      s.style.transitionDelay = (i * 0.06) + 's';
+      bigEl.appendChild(s);
+    });
+
+    document.getElementById('who').textContent = birthdayConfig.name || 'em iu';
+    document.getElementById('event-date').textContent = birthdayConfig.eventDate || '17/09/2026';
+    document.getElementById('event-time').textContent = birthdayConfig.eventTime || '19h30';
+    document.getElementById('event-location').textContent = birthdayConfig.eventLocation || 'Chiik Steak & Pasta (7 Đỗ Quang, Phường Thảo Điền, Quận 2)';
+    document.getElementById('meta').textContent = '';
+
+    setTimeout(() => document.getElementById('invite-wrap').classList.add('is-visible'), 200);
+    setTimeout(() => document.getElementById('today').classList.add('is-visible'), 300);
+    setTimeout(() => bigEl.querySelectorAll('span').forEach(s => s.classList.add('is-visible')), 1400);
+    setTimeout(() => document.getElementById('who').classList.add('is-visible'), 3000);
+    setTimeout(() => document.querySelectorAll('.invite-item, .footer-line').forEach(el => el.classList.add('is-visible')), 3400);
+    setTimeout(() => document.getElementById('meta').classList.add('is-visible'), 3800);
+    setTimeout(() => document.getElementById('cta').classList.add('is-visible'), 4200);
+    setTimeout(() => { if (window.__bdaudio) window.__bdaudio.fadeTo(.4, 2500); }, 1500);
+
+    // custom particle celebration — small warm bursts, no external libraries
+    const canvas = document.getElementById('fx');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    function size(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+    size(); addEventListener('resize', size);
+
+    const reduced = document.documentElement.classList.contains('reduced-motion');
+    const colors = ['#ffb454', '#ff8f6b', '#ffe1b0', '#ffffff'];
+    let particles = [];
+
+    function burst(x, y, count){
+      for (let i=0;i<count;i++){
+        const angle = Math.random()*Math.PI*2;
+        const speed = 1 + Math.random()*3.2;
+        particles.push({
+          x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed - 1,
+          life: 1, decay: 0.008 + Math.random()*0.01,
+          r: 1 + Math.random()*2.2, c: colors[Math.floor(Math.random()*colors.length)]
+        });
+      }
+    }
+
+    function loop(){
+      ctx.clearRect(0,0,W,H);
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.01; p.life -= p.decay;
+        ctx.globalAlpha = Math.max(p.life, 0);
+        ctx.fillStyle = p.c;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+      });
+      particles = particles.filter(p => p.life > 0);
+      ctx.globalAlpha = 1;
+      if (!reduced) requestAnimationFrame(loop);
+    }
+
+    if (!reduced){
+      loop();
+      setTimeout(() => burst(W*0.3, H*0.35, 90), 1500);
+      setTimeout(() => burst(W*0.7, H*0.3, 90), 2100);
+      setTimeout(() => burst(W*0.5, H*0.25, 130), 2700);
+      const ambient = setInterval(() => {
+        burst(Math.random()*W, H*0.2 + Math.random()*H*0.3, 26);
+      }, 2600);
+    }
+  </script>
+</body>
+</html>

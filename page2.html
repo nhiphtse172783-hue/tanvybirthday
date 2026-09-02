@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 little things</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body.tone-night {
+    background: url('assets/images/sky.jpg') center/cover no-repeat fixed;
+    background-color: #0a0f17;
+  }
+  .grain {
+    opacity: 0.01;
+  }
+  .field{ position:relative; width:min(940px, 92vw); height: min(64vh, 620px); z-index:2; }
+  .shard{
+    position:absolute; width: 54px; height: 54px; padding:0; border:none;
+    background: transparent; cursor:none; animation: drift 7s ease-in-out infinite;
+    transition: transform 500ms var(--ease-soft), filter 500ms var(--ease-soft);
+    display:grid; place-items:center; touch-action: none;
+    user-select: none;
+  }
+  .light-icon{
+    width: 38px; height: 38px; display:block; object-fit:contain;
+    filter: drop-shadow(0 0 6px rgba(255,198,105,.35)) drop-shadow(0 0 12px rgba(247,145,78,.25));
+    opacity: .28;
+    transition: opacity 300ms ease, filter 300ms ease, transform 300ms ease;
+  }
+  @media (hover:none){ .shard{ cursor:pointer; } }
+  .shard:hover, .shard:focus-visible{
+    transform: scale(1.08);
+  }
+  .shard.is-seen{
+    transform: scale(1.25);
+  }
+  .shard.is-seen .light-icon{
+    filter: drop-shadow(0 0 18px rgba(255,214,128,.95)) drop-shadow(0 0 32px rgba(247,145,78,.82));
+    opacity: 1;
+  }
+  @keyframes drift{ 0%,100%{ margin-top:0; } 50%{ margin-top:-14px; } }
+
+  .caption{
+    position:relative; z-index:2; margin-top: 3.4vh; min-height: 3em;
+    font-family: var(--font-display); font-size: clamp(1.1rem, 2.6vw, 1.6rem);
+    max-width: 30ch; opacity:0; transition: opacity 600ms var(--ease-soft);
+    color: #fffaf2; text-shadow: 0 2px 10px rgba(0,0,0,.3);
+  }
+  .caption.is-visible{ opacity:1; }
+
+  .tally{ position:relative; z-index:2; margin-top:.8em; font-size:.78rem; color:rgba(255,255,255,.86); letter-spacing:.05em; text-shadow: 0 2px 10px rgba(0,0,0,.25); }
+
+  .outro{ position:relative; z-index:2; margin-top: 2.6em; opacity:0; transition: opacity 900ms var(--ease-soft); }
+  .outro.is-visible{ opacity:1; }
+  .outro p:first-child{ font-family: var(--font-display); font-size: clamp(1.2rem,2.6vw,1.6rem); color: #fffaf2; text-shadow: 0 2px 10px rgba(0,0,0,.25); }
+  .outro p.small{ color: rgba(255,255,255,.82); margin-top:.5em; font-size:.95rem; text-shadow: 0 2px 10px rgba(0,0,0,.25); }
+</style>
+</head>
+<body class="tone-night">
+  <div class="grain"></div>
+  <button class="sound-toggle" aria-label="Play music"></button>
+  <div class="progress" data-page="2"></div>
+
+  <main class="scene">
+    <h1 class="headline" style="font-size:clamp(1.6rem,3.6vw,2.6rem); max-width:20ch; color:#fffaf2; text-shadow: 0 3px 14px rgba(0,0,0,.28);">một vài điều dễ thương</h1>
+    <div class="field" id="field"></div>
+    <p class="caption" id="caption"></p>
+    <p class="tally" id="tally">em chọn mấy cái lồng đèn ở trên á</p>
+
+    <div class="outro" id="outro">
+      <p>nhiều lắm nhưng mà hiện tại anh nghĩ được mấy cái à</p>
+      <p class="small">hong nghe hết thì em qua cũng được nhe</p>
+      <div style="margin-top:1.6em;">
+        <a href="page7.html" class="btn" data-go="page7.html">đi tiếp nè</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    const field = document.getElementById('field');
+    const caption = document.getElementById('caption');
+    const tally = document.getElementById('tally');
+    const outro = document.getElementById('outro');
+    const seen = new Set();
+    const mediaList = Array.isArray(birthdayConfig.page2Media)
+      ? birthdayConfig.page2Media
+      : [birthdayConfig.page2Media || birthdayConfig.music || 'assets/music/birthday.mp3'];
+
+    function playMedia(index = 0) {
+      const mediaSrc = mediaList[index] || mediaList[0] || birthdayConfig.music || 'assets/music/birthday.mp3';
+      const lower = mediaSrc.toLowerCase();
+      const isVideo = lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.mov');
+      const media = document.createElement(isVideo ? 'video' : 'audio');
+      media.src = mediaSrc;
+      media.controls = false;
+      media.autoplay = true;
+      media.playsInline = true;
+      media.style.position = 'fixed';
+      media.style.left = '50%';
+      media.style.bottom = '24px';
+      media.style.transform = 'translateX(-50%)';
+      media.style.width = 'min(360px, 82vw)';
+      media.style.maxHeight = '220px';
+      media.style.borderRadius = '12px';
+      media.style.zIndex = '1000';
+      media.style.background = '#000';
+      media.style.boxShadow = '0 14px 32px rgba(0,0,0,.25)';
+
+      const existing = document.getElementById('page2-media-player');
+      if (existing) existing.remove();
+
+      media.id = 'page2-media-player';
+      document.body.appendChild(media);
+      media.play().catch(() => {});
+    }
+
+    const items = birthdayConfig.littleThings.slice(0, 11);
+    const golden = 137.508;
+    items.forEach((text, i) => {
+      const shard = document.createElement('button');
+      shard.className = 'shard';
+      shard.type = 'button';
+      shard.setAttribute('aria-label', 'A little thing');
+
+      const icon = document.createElement('img');
+      icon.src = 'assets/fonts/thailand.png';
+      icon.alt = 'light icon';
+      icon.className = 'light-icon';
+      shard.appendChild(icon);
+
+      const angle = i * golden * (Math.PI / 180);
+      const radius = 24 + (i % 4) * 14;
+      const cx = 50 + Math.cos(angle) * radius * 0.82;
+      const cy = 50 + Math.sin(angle) * radius * 0.72;
+      shard.style.left = `calc(${Math.min(92, Math.max(4, cx))}% - 27px)`;
+      shard.style.top = `calc(${Math.min(88, Math.max(4, cy))}% - 27px)`;
+      shard.style.animationDelay = (i * 0.25) + 's';
+
+      let isDragging = false;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      function show(){
+        shard.classList.add('is-seen');
+        if (!seen.has(i)){
+          seen.add(i);
+          tally.textContent = `em đã nghe được ${seen.size} điều rồi nè`;
+          if (seen.size >= 6) outro.classList.add('is-visible');
+        }
+        playMedia(i);
+      }
+
+      shard.addEventListener('click', (event) => {
+        if (!isDragging) show();
+      });
+
+      const startDrag = (event) => {
+        isDragging = true;
+        const rect = shard.getBoundingClientRect();
+        const fieldRect = field.getBoundingClientRect();
+        offsetX = event.clientX - rect.left;
+        offsetY = event.clientY - rect.top;
+        shard.setPointerCapture?.(event.pointerId);
+        shard.style.zIndex = '10';
+        shard.style.animation = 'none';
+        fieldRect;
+      };
+
+      const moveDrag = (event) => {
+        if (!isDragging) return;
+        const fieldRect = field.getBoundingClientRect();
+        const x = event.clientX - fieldRect.left - offsetX + 27;
+        const y = event.clientY - fieldRect.top - offsetY + 27;
+
+        const clampedX = Math.min(Math.max(x, 0), fieldRect.width - 54);
+        const clampedY = Math.min(Math.max(y, 0), fieldRect.height - 54);
+
+        shard.style.left = clampedX + 'px';
+        shard.style.top = clampedY + 'px';
+      };
+
+      const endDrag = () => {
+        isDragging = false;
+        shard.style.zIndex = '';
+        shard.style.animation = '';
+      };
+
+      shard.addEventListener('pointerdown', startDrag);
+      shard.addEventListener('pointermove', moveDrag);
+      shard.addEventListener('pointerup', endDrag);
+      shard.addEventListener('pointerleave', endDrag);
+      shard.addEventListener('pointercancel', endDrag);
+
+      field.appendChild(shard);
+    });
+  </script>
+</body>
+</html>

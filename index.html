@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>for you</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .secret-text{
+    position:relative; z-index:3; min-height: 3.4em;
+    font-family: var(--font-display); font-weight:400;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    max-width: 18ch; opacity:0;
+    line-height:1.1;
+  }
+  .secret-text.is-visible{ animation: rise 1200ms var(--ease-slow) forwards; }
+  @keyframes rise{ from{ opacity:0; transform: translateY(12px); } to{ opacity:1; transform:none; } }
+
+  .secret-sub{
+    position:relative; z-index:3; margin-top:1em; color: var(--ink-soft);
+    font-size:.95rem; letter-spacing:.02em; opacity:0;
+  }
+  .secret-sub.is-visible{ animation: rise 1100ms var(--ease-slow) forwards; }
+
+  .begin-wrap{ position:relative; z-index:3; margin-top:2.6em; opacity:0; }
+  .begin-wrap.is-visible{ animation: rise 900ms var(--ease-slow) forwards; }
+</style>
+</head>
+<body class="tone-night">
+  <div class="grain"></div>
+  <button class="sound-toggle" aria-label="Play music"></button>
+  <div class="progress" data-page="1"></div>
+
+  <main class="scene" id="scene">
+    <p class="secret-text" id="line1">anh có làm cái này cho em nè</p>
+    <p class="secret-sub" id="line2">nhỏ nhỏ thôi ạ</p>
+    <div class="begin-wrap" id="beginWrap">
+      <a href="page2.html" class="btn" data-go="page2.html">em xem thử nhe</a>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    const line1 = document.getElementById('line1');
+    const line2 = document.getElementById('line2');
+    const beginWrap = document.getElementById('beginWrap');
+
+    setTimeout(() => line1.classList.add('is-visible'), 500);
+    setTimeout(() => line2.classList.add('is-visible'), 1200);
+    setTimeout(() => beginWrap.classList.add('is-visible'), 1800);
+  </script>
+</body>
+</html>
