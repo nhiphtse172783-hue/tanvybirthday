@@ -18,7 +18,7 @@ const birthdayConfig = {
   // PAGE 10 — invitation details
   eventDate: "17/09/2026",
   eventTime: "19h30",
-  eventLocation: "Chiik Steak & Pasta (7 Đỗ Quang, Phường Thảo Điền, Quận 2)",
+  eventLocation: "No Nê (48 Nguyễn Văn Mai, Xuân Hòa, Hồ Chí Minh)",
 
   // ------------------------------------------------------------------
   // PAGE 2 — "11 Little Things"
